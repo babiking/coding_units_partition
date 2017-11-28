@@ -56,7 +56,7 @@ lim_blocks = 100000;
 
 
 mode = 'train';
-savePath = ['/home/brojackfeely/Research/Video_CTU_withHuQiang/data/ICME_', mode];
+savePath = ['/home/brojackfeely/Research/Video_CTU_withHuQiang/data/ICME_', mode, '_', num2str(CU_depth)];
 batchSize = 10;
 
 if ~exist(savePath, 'dir')   
@@ -64,6 +64,20 @@ if ~exist(savePath, 'dir')
 else
     dos(['rm ', savePath, '/*']);
 end
+
+
+
+
+
+% create .txt e.g. trainList.txt and write each .h5 filename into .txt
+txtList = [savePath, '/', mode, 'List.txt'];
+
+if exist(txtList, 'file') 
+    dos(['rm ', txtList]);
+end
+
+txt_fid = fopen(txtList, 'wt');
+
 
 
 
@@ -95,6 +109,9 @@ while (~feof(fid))                          % check if reach the end of file str
         filename = ['train_', num2str(num_hdf5), '.h5'];
        
         randOrder = store_Hdf5_file(data_stack, label_stack, savePath, filename, batchSize);
+        save([savePath, '/randOrder', num2str(num_hdf5)], 'randOrder');
+        
+        fprintf(txt_fid, '%s\n', filename);
         
         num_hdf5 = num_hdf5 + 1;
         
@@ -116,6 +133,8 @@ while (~feof(fid))                          % check if reach the end of file str
 end
 
 fclose(fid);
+fclose(txt_fid);
+
 %-------------------------------------------------------------------------%
 
 
