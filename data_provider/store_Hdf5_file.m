@@ -54,8 +54,8 @@ h5disp(fullfile(savePath, filename));
               fprintf('Warning: replacing existing file %s \n', filename);
               delete(filename);
             end      
-            h5create(filename, '/data', [dat_dims(1:end-1) Inf], 'Datatype', 'uint8', 'ChunkSize', [dat_dims(1:end-1) chunksz]);  % width, height, channels, number 
-            h5create(filename, '/label', [lab_dims(1:end-1) Inf], 'Datatype', 'uint8', 'ChunkSize', [lab_dims(1:end-1) chunksz]); % width, height, channels, number 
+            h5create(filename, '/data', [dat_dims(1:end-1) Inf], 'Datatype', 'single', 'ChunkSize', [dat_dims(1:end-1) chunksz]);  % width, height, channels, number 
+            h5create(filename, '/label', [lab_dims(1:end-1) Inf], 'Datatype', 'single', 'ChunkSize', [lab_dims(1:end-1) chunksz]); % width, height, channels, number 
             if ~exist('startloc','var') 
               startloc.dat=[ones(1,length(dat_dims)-1), 1];
               startloc.lab=[ones(1,length(lab_dims)-1), 1];

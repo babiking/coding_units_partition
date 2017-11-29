@@ -82,11 +82,13 @@ txt_fid = fopen(txtList, 'wt');
 
 
 
-data_stack  = zeros(1, CU_depth, CU_depth, lim_blocks);  
+data_stack  = zeros(CU_depth, CU_depth, 1, lim_blocks);  
 label_stack = zeros(1, lim_blocks);
 
 while (~feof(fid))                          % check if reach the end of file stream
-
+    
+    tic
+    
     [frame, element_count] = fread(fid, offset, '*uint8');   % '*uint8' equivalent to 'uint8=>uint8'     
     
     if(element_count < CU_depth)
@@ -101,23 +103,26 @@ while (~feof(fid))                          % check if reach the end of file str
     sample_data  = reshape(frame(2:end), [CU_depth, CU_depth]);
     sample_data  = sample_data';
     
-    data_stack(1, :, :, counter) = sample_data;
+    data_stack(:, :, 1, counter) = sample_data./255;
     label_stack(counter) = sample_label;
     
     if( counter >= lim_blocks )
         
-        filename = ['train_', num2str(num_hdf5), '.h5'];
+        display(['cread No.', num2str(num_hdf5), '.h5 file......']);
+        toc 
+        
+        filename = [mode, '_', num2str(num_hdf5), '.h5'];
        
         randOrder = store_Hdf5_file(data_stack, label_stack, savePath, filename, batchSize);
         save([savePath, '/randOrder', num2str(num_hdf5)], 'randOrder');
         
-        fprintf(txt_fid, '%s\n', filename);
+        fprintf(txt_fid, '%s\n', [savePath, '/', filename]);
         
         num_hdf5 = num_hdf5 + 1;
         
         counter = 0;
         
-        data_stack  = zeros(1, CU_depth, CU_depth, 1, lim_blocks);  
+        data_stack  = zeros(CU_depth, CU_depth, 1, lim_blocks);  
         label_stack = zeros(1, lim_blocks);
         
     end
